@@ -32,24 +32,22 @@ public:
     void into_RGB(uint8_t* d);
     void out_RGB(uint8_t* d);
 
-    void code_00xx_0000(std::string s, int row, int col);
     void code_xx00_0000(std::string s, int row, int col);
+    void code_00xx_0000(std::string s, int row, int col);
+    void code_0000_xx00(std::string s, int row, int col);
     int	find_block_and_hide(std::string for_hash, std::string to_hide);
 
-    std::string get_mes_from_00xx_0000(int max_len, int row, int col);
     std::string get_mes_from_xx00_0000(int max_len, int row, int col);
+    std::string get_mes_from_00xx_0000(int max_len, int row, int col);
+    std::string get_mes_from_0000_xx00(int max_len, int row, int col);
     std::string find_block_and_return_mes(std::string for_hash, int secret_number);
-
-    //void		find_continuous();
-    //bool		is_continuous_square(int j_0, int i_0, int N);
-    //bool		check_for_continuous_squares(int x);
 
     std::string get_hash(std::string str);
     int get_x(std::string s);
     int getint(std::string s);
-
+	
     void calc_hist();
-    void find_block_from_hist(int *a, std::vector<int> mas_lum, struct max_val point);
+    int find_block_from_hist(int *a, std::vector<int> mas_lum, max_val point);
     void write_hist_to_file(int* a);
 };
 
