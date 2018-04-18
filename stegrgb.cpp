@@ -21,9 +21,6 @@ void RGB::into_RGB(uint8_t* d)
             r.rgbGreen = d[k++];
             r.rgbRed = d[k++];
             rgb.push_back(r);
-            /*rgb[i].rgbBlue = d[k++];
-            rgb[i].rgbGreen = d[k++];
-            rgb[i].rgbRed = d[k++];*/
         }
     }
 }
@@ -42,64 +39,53 @@ void RGB::out_RGB(uint8_t* d)
     }
 }
 
-/*void RGB::find_continuous()
+void RGB::code_xx00_0000(std::string s, int row, int col)
 {
-    for (int i = 0; i < Height; i += 8)
-    {
-        for(int j = 0; j < Width; j +=8)
-        if (solid_square(i, j, 8) == true)
-        {
-            sol[i][j] = true;
-            //std::cout << i << " " << j << std::endl;
-        }
-    }
-}*/
-
-/*bool RGB::is_continuous_square(int j_0, int i_0, int N)	//working
-{
-    if ((j_0 > Height - 8) || (i_0 > Width - 8))
+    if ((row > Height - 8) || (col > Width - 8))
     {
         //std::cout << "Out of boundaries";
-        return false;
+        return;
     }
-    double v[8] = { 0 };
-    int k = 0;
-    int res_l = 100, res_h = 0;
-    int length = 0, height = 0;
-    for (int j = j_0; j < j_0 + N - 1; j++)
+
+    int mask = 63;	////63(10) = 0011 1111(2)
+    size_t k = 0;
+    char cur;
+    int pos = 0, colour = 0;
+    std::string finale;
+    for (int i = row; i < row + 8; i++)
     {
-        for (int i = i_0; i < i_0 + N - 1; i++)
+        for (int j = col; j < col + 8; )
         {
-            if (((abs(rgb[j][i].rgbBlue - rgb[j][i + 1].rgbBlue)) < 10) && ((abs(rgb[j][i].rgbGreen - rgb[j][i + 1].rgbGreen)) < 10) && ((abs(rgb[j][i].rgbRed - rgb[j][i + 1].rgbRed)) < 10))
+            if (k < s.length())
             {
-                v[k] += (rgb[j][i].rgbBlue * 0.1 + rgb[j][i].rgbGreen * 0.6 + rgb[j][i].rgbRed * 0.3);//v[j] += (rgb[j][i].rgbBlue * 0.114 + rgb[j][i].rgbGreen * 0.587 + rgb[j][i].rgbRed * 0.299);
-                continue;
+                int cur_val = s[k];
+                pos = pos % 4;
+                switch (pos)
+                {
+                case 0:	cur = (cur_val & 192); pos++; break;        //1100 0000
+                case 1:	cur = (cur_val & 48) << 2; pos++; break;	//0011 0000
+                case 2:	cur = (cur_val & 12) << 4; pos++; break;	//0000 1100
+                case 3:	cur = (cur_val & 3) << 6; pos++; break;		//0000 0011
+                }
+
+                if (pos == 4)
+                {
+                    k++;
+                }
+
+                colour = colour % 3;
+                switch (colour)
+                {
+                case 0: rgb[i * Width + j].rgbBlue = rgb[i * Width + j].rgbBlue & mask; rgb[i * Width + j].rgbBlue = rgb[i * Width + j].rgbBlue | cur; colour++; break;
+                case 1: rgb[i * Width + j].rgbGreen = rgb[i * Width + j].rgbGreen & mask; rgb[i * Width + j].rgbGreen = rgb[i * Width + j].rgbGreen | cur; colour++; break;
+                case 2: rgb[i * Width + j].rgbRed = rgb[i * Width + j].rgbRed & mask; rgb[i * Width + j].rgbRed = rgb[i * Width + j].rgbRed | cur; colour++; j++; break;
+                }
+                cur = 0;
             }
-            else
-            {
-                return false;
-            }
+            else { return; }
         }
-        if ((k > 0) && (abs(v[k] - v[k - 1]) >= 50))
-        {
-            return false;
-        }
-        k++;
     }
-    return true;
 }
-*/
-
-/*bool RGB::check_for_continuous_squares(int x)
-{
-    if (x < 0)
-    {
-        return false;
-    }
-    if (sol[x][x] == true)
-        return true;
-}*/
-
 void RGB::code_00xx_0000(std::string s, int row, int col)
 {
     if ((row > Height - 8) || (col > Width - 8))
@@ -124,7 +110,7 @@ void RGB::code_00xx_0000(std::string s, int row, int col)
                 {
                 case 0:	cur = (cur_val & 192) >> 2; pos++; break;	//1100 0000
                 case 1:	cur = cur_val & 48; pos++; break;			//0011 0000
-                case 2:	cur = (cur_val & 12) << 2; pos++; break;		//0000 1100
+                case 2:	cur = (cur_val & 12) << 2; pos++; break;	//0000 1100
                 case 3:	cur = (cur_val & 3) << 4; pos++; break;		//0000 0011
                 }
 
@@ -146,15 +132,14 @@ void RGB::code_00xx_0000(std::string s, int row, int col)
         }
     }
 }
-void RGB::code_xx00_0000(std::string s, int row, int col)	//xx00 0000
+void RGB::code_0000_xx00(std::string s, int row, int col)
 {
     if ((row > Height - 8) || (col > Width - 8))
     {
         //std::cout << "Out of boundaries";
         return;
     }
-
-    int mask = 63;	////207(10) = 1100 1111(2)
+    int mask = 243;	////243(10) = 1111 0011(2)
     size_t k = 0;
     char cur;
     int pos = 0, colour = 0;
@@ -169,10 +154,10 @@ void RGB::code_xx00_0000(std::string s, int row, int col)	//xx00 0000
                 pos = pos % 4;
                 switch (pos)
                 {
-                case 0:	cur = (cur_val & 192); pos++; break;	//1100 0000
-                case 1:	cur = (cur_val & 48) << 2; pos++; break;			//0011 0000
-                case 2:	cur = (cur_val & 12) << 4; pos++; break;		//0000 1100
-                case 3:	cur = (cur_val & 3) << 6; pos++; break;		//0000 0011
+                case 0:	cur = (cur_val & 192) >> 4; pos++; break;	//1100 0000
+                case 1:	cur = (cur_val & 48) >> 2; pos++; break;	//0011 0000
+                case 2:	cur = (cur_val & 12); pos++; break;     	//0000 1100
+                case 3:	cur = (cur_val & 3) << 2; pos++; break;		//0000 0011
                 }
 
                 if (pos == 4)
@@ -200,25 +185,70 @@ int RGB::find_block_and_hide(std::string for_hash, std::string to_hide)
     std::string hash = get_hash(for_hash);
     int x = get_x(hash);
 
-   /*
-    * while (check_for_solids(x) != true)
-    {
-        hash = get_hash(hash);
-        x = get_x(hash);
-        secret_number += 2;
-        if (secret_number > 100 && x > 0) { break; }
-    }*/
-    while(x % 8 != 0) {
+    while(x > Height || x > Width || x < 0) {    //while (x % 8 != 0)
         hash = get_hash(hash);
         x = get_x(hash);
     }
     std::cout << "x = " << x << std::endl;
-    code_00xx_0000(to_hide, x, x);
-    //code_xx00_0000(to_hide, x, x);
+
+    code_xx00_0000(to_hide, x, x);
+    //code_00xx_0000(to_hide, x, x);
+    //code_0000_xx00(to_hide, x, x);
 
     return secret_number;
 }
 
+std::string RGB::get_mes_from_xx00_0000(int max_len, int row, int col)
+{
+    if ((row > Height - 8) || (col > Width - 8))
+    {
+        return "Out of boundaries";
+    }
+    std::string finalle;
+    int mask = 192;
+    int pos = 0;
+    char colour = 0;
+    int color = 0;
+    char word = 0;
+    int count = 0;
+
+    for (int i = row; i < row + 8; i++)
+    {
+        for (int j = col; j < col + 8;)							
+        {
+            if (count < max_len)
+            {
+                colour = colour % 3;
+                switch (colour)
+                {
+                case 0:	color = rgb[i * Width + j].rgbBlue; colour++; break;        //1100 0000
+                case 1:	color = rgb[i * Width + j].rgbGreen; colour++; break;	    //0011 0000
+                case 2:	color = rgb[i * Width + j].rgbRed; colour++; j++;  break;	//0000 1100
+                }
+
+                pos = pos % 4;
+                switch (pos)
+                {
+                case 0: word = word | (color & mask); pos++; break;
+                case 1: word = word | (color & mask) >> 2; pos++; break;
+                case 2: word = word | (color & mask) >> 4; pos++;  break;
+                case 3: word = word | (color & mask) >> 6; pos++; break;
+                }
+                if (pos == 4)
+                {
+                    finalle += word;
+                    word = 0;
+                    count++;
+                }
+            }
+            else
+            {
+                return finalle;
+            }
+        }
+    }
+    return finalle;
+}
 std::string RGB::get_mes_from_00xx_0000(int max_len, int row, int col)
 {
     if ((row > Height - 8) || (col > Width - 8))
@@ -235,15 +265,15 @@ std::string RGB::get_mes_from_00xx_0000(int max_len, int row, int col)
 
     for (int i = row; i < row + 8; i++)
     {
-        for (int j = col; j < col + 8;)							//252(10) = 1111 1100(2)
+        for (int j = col; j < col + 8;)						
         {
             if (count < max_len)
             {
                 colour = colour % 3;
                 switch (colour)
                 {
-                case 0:	color = rgb[i * Width + j].rgbBlue; colour++; break;//1100 0000
-                case 1:	color = rgb[i * Width + j].rgbGreen; colour++; break;	//0011 0000
+                case 0:	color = rgb[i * Width + j].rgbBlue; colour++; break;        //1100 0000
+                case 1:	color = rgb[i * Width + j].rgbGreen; colour++; break;	    //0011 0000
                 case 2:	color = rgb[i * Width + j].rgbRed; colour++; j++;  break;	//0000 1100
                 }
 
@@ -270,14 +300,14 @@ std::string RGB::get_mes_from_00xx_0000(int max_len, int row, int col)
     }
     return finalle;
 }
-std::string RGB::get_mes_from_xx00_0000(int max_len, int row, int col)
+std::string RGB::get_mes_from_0000_xx00(int max_len, int row, int col)
 {
     if ((row > Height - 8) || (col > Width - 8))
     {
         return "Out of boundaries";
     }
     std::string finalle;
-    int mask = 192;//0011 0000
+    int mask = 12;//0000 1100
     int pos = 0;
     char colour = 0;
     int color = 0;
@@ -286,25 +316,25 @@ std::string RGB::get_mes_from_xx00_0000(int max_len, int row, int col)
 
     for (int i = row; i < row + 8; i++)
     {
-        for (int j = col; j < col + 8;)							//252(10) = 1111 1100(2)
+        for (int j = col; j < col + 8;)						
         {
             if (count < max_len)
             {
                 colour = colour % 3;
                 switch (colour)
                 {
-                case 0:	color = rgb[i * Width + j].rgbBlue; colour++; break;//1100 0000
-                case 1:	color = rgb[i * Width + j].rgbGreen; colour++; break;	//0011 0000
+                case 0:	color = rgb[i * Width + j].rgbBlue; colour++; break;        //1100 0000
+                case 1:	color = rgb[i * Width + j].rgbGreen; colour++; break;	    //0011 0000
                 case 2:	color = rgb[i * Width + j].rgbRed; colour++; j++;  break;	//0000 1100
                 }
 
                 pos = pos % 4;
                 switch (pos)
                 {
-                case 0: word = word | (color & mask); pos++; break;
-                case 1: word = word | (color & mask) >> 2; pos++; break;
-                case 2: word = word | (color & mask) >> 4; pos++;  break;
-                case 3: word = word | (color & mask) >> 6; pos++; break;
+                case 0: word = word | (color & mask) << 4; pos++; break;
+                case 1: word = word | (color & mask) << 2; pos++; break;
+                case 2: word = word | (color & mask); pos++;  break;
+                case 3: word = word | (color & mask) >> 2; pos++; break;
                 }
                 if (pos == 4)
                 {
@@ -332,13 +362,14 @@ std::string RGB::find_block_and_return_mes(std::string for_hash, int secret_numb
         x = get_x(hash);
         count += 2;
     }*/
-    while (x % 8 != 0)
+    while(x > Height || x > Width || x < 0)
     {
         hash = get_hash(hash);
         x = get_x(hash);
     }
-    return get_mes_from_00xx_0000(for_hash.length()*3, x, x);
-    //return get_mes_from_xx00_0000(for_hash.length() * 3, x, x);
+    return get_mes_from_xx00_0000(for_hash.length() * 3, x, x);
+    //return get_mes_from_00xx_0000(for_hash.length()*3, x, x);
+    //return get_mes_from_0000_xx00(for_hash.length() * 3, x, x);
 }
 
 std::string RGB::get_hash(std::string str)
@@ -388,7 +419,6 @@ int RGB::getint(std::string s)
     return a;
 }
 
-
 void RGB::calc_hist()
 {
     std::vector<int> mas_lum;
@@ -400,7 +430,7 @@ void RGB::calc_hist()
     max_val max_blue{0,0,0};
     max_val max_green{0,0,0};
     max_val max_red{0,0,0};
-
+int num = 0;
     for(int i = 0; i < Height * Width; i++)
         {
             int lum = (0.299 * rgb[i].rgbRed + 0.587 * rgb[i].rgbGreen + 0.114 * rgb[i].rgbBlue);
@@ -412,22 +442,25 @@ void RGB::calc_hist()
             green_col_height[rgb[i].rgbGreen]+=1;
             red_col_height[rgb[i].rgbRed]+=1;
 
-            if(str_max_lum.val < lum_col_height[lum]) {str_max_lum.val = lum_col_height[lum]; str_max_lum.col = i / Width; str_max_lum.row = i % Width;}
-            if(max_blue.val < blue_col_height[lum]) {max_blue.val = blue_col_height[lum];max_blue.col = i / Width; max_blue.row = i % Width;}
-            if(max_green.val < green_col_height[lum]) {max_green.val = green_col_height[lum];max_green.col = i / Width; max_green.row = i % Width;}
-            if(max_red.val < red_col_height[lum]) {max_red.val = red_col_height[lum];max_red.col = i / Width; max_red.row = i % Width;}
+            if(str_max_lum.val < lum_col_height[lum])
+            {
+                str_max_lum.val = lum_col_height[lum];
+                str_max_lum.col = i % Width;
+                str_max_lum.row = i / Width;
+            }
     }
      write_hist_to_file(lum_col_height);
      find_block_from_hist(lum_col_height, mas_lum, str_max_lum);
 }
-void RGB::find_block_from_hist(int *a, std::vector<int> mas_lum, struct max_val point)
+int RGB::find_block_from_hist(int *a, std::vector<int> mas_lum, max_val point)
 {
     struct max_val lv,pv,ln,pn;
-    for(int y = 0; y < 100; y++)
+    for(int y = 0; y < 80; y++)
     {
-        if(point.col + y > Height){continue;}
-        for(int x = 1; x < 100; x++)
+        if(point.col + y > Height){std::cout << "out of Y"; return - 1;}
+        for(int x = 1; x < 80; x++)
         {
+            if(point.col + x > Width){std::cout << "out of X"; return -1;}
             if(((point.col + y) * Width + point.row + x) > Width*Height)
             {break;}
 
@@ -442,12 +475,12 @@ void RGB::find_block_from_hist(int *a, std::vector<int> mas_lum, struct max_val 
             {lv.row = point.row - x; ln.row = point.row - x; ln.col = point.col - y; pn.col = point.col - y;}
         }
     }
-    int pause = 0;
 }
+
 
 void RGB::write_hist_to_file(int* a)
 {
-    FILE* f = fopen("1.txt", "w");
+    FILE* f = fopen("C:\\Users\\Anna\\Desktop\\1.txt", "w");
     for(int i = 0; i < 255; i++)
     {
         int cur = a[i] / 10;
