@@ -2,8 +2,8 @@
 
 RGB::RGB(int height, int width, int comp)
 {
-    Height = width;
-    Width = height;
+    Height = height;
+    Width = width;
     Comp = comp;
 }
 RGB::~RGB(){}
