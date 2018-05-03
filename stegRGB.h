@@ -3,7 +3,7 @@
 # include <math.h>
 # include <fstream>
 # include <string>
-# include "md5\md5wrapper.h"
+# include "md5wrapper.h"
 # include "rgb_structure.h"
 # include <iostream>
 # include <vector>

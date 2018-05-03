@@ -2,7 +2,7 @@
 # ifndef JPEG_LOADER_H
 # define JPEG_LOADER_H
 # include <stdio.h>
-# include "jpeglib/jpeglib.h"
+# include "jpeglib.h"
 # include <setjmp.h>
 # include <stdint.h>
 # include "boost/scoped_ptr.hpp"
