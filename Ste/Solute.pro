@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp \
+    main.cpp \
     md5/md5.cpp \
     md5/md5wrapper.cpp \
     jpeglib/jaricom.c \
@@ -74,13 +74,6 @@ SOURCES += \
     stb_image_write.h \
     stegRGB.h \
     JpegImage.h \
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../Q/Qwt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../Q/Qwt
-else:unix: LIBS += -L$$PWD/../../../../Q/Qwt/ -lqwt
-
-INCLUDEPATH += $$PWD/../../../../Q/Qwt
-DEPENDPATH += $$PWD/../../../../Q/Qwt
 
 FORMS +=
 
