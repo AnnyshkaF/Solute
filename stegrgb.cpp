@@ -1,5 +1,36 @@
 #include "stegRGB.h"
 
+#ifndef _WIN32
+
+#include <openssl/md5.h>
+
+#include <sstream>
+#include <iomanip>
+#include <stdio.h>
+
+std::string md5wrapper::getHashFromString(std::string text)
+{
+    unsigned char* hash = MD5((const unsigned char *)text.c_str(), text.length(), NULL);
+
+    std::stringstream out;
+    out << std::hex;
+    for (int i = 0; i < MD5_DIGEST_LENGTH; ++i)
+    {
+        out << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+    return out.str();
+}
+
+md5wrapper::md5wrapper()
+{
+}
+
+md5wrapper::~md5wrapper()
+{
+}
+
+#endif
+
 RGB::RGB(int height, int width, int comp)
 {
     Height = height;
