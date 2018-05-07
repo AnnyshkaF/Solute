@@ -1,11 +1,11 @@
 # define _CRT_SECURE_NO_WARNINGS
 # ifndef JPEG_LOADER_H
 # define JPEG_LOADER_H
-# include <stdio.h>
+
 # include "jpeglib/jpeglib.h"
 # include <setjmp.h>
 # include <stdint.h>
-# include "boost/scoped_ptr.hpp"
+# include<memory>
 
 class JpegImage
 {
@@ -17,8 +17,7 @@ public:
         uint8_t nNumComponent;
         uint8_t* pData;
     };
-    boost::scoped_ptr<ImageInfo> m_pImageInfo{new ImageInfo[1]};
-
+    std::unique_ptr<ImageInfo> m_pImageInfo{new ImageInfo[1]};
     JpegImage(const char* szFileName);
 
 private:
