@@ -2,10 +2,18 @@
 #include "JpegImage.h"
 #include "stegRGB.h"
 
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
-    JpegImage jpegImage("C:\\Users\\Anna\\Desktop\\SN.jpg");
+    //argc = 3;
+    if(argc != 3)
+    {
+	std::cout << "Not enough arg!" <<std::endl;
+        return 1;
+    }
+    //argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
+    //argv[2] = "C:\\Users\\Anna\\Desktop\\res.jpg";
 
+    JpegImage jpegImage(argv[1]);
     if (jpegImage.m_pImageInfo)
     {
         RGB r(jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nNumComponent);
@@ -18,10 +26,10 @@ int main(int argc, char* argv[])
 
         r.OutRGB(jpegImage.m_pImageInfo->pData);
         //r.CalculateHistogram();
-        stbi_write_jpg("C:\\Users\\Anna\\Desktop\\res.jpg", jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nNumComponent, jpegImage.m_pImageInfo->pData, 100);
+        stbi_write_jpg(argv[2], jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nNumComponent, jpegImage.m_pImageInfo->pData, 100);
     }
 
-    JpegImage jpegImage1("C:\\Users\\Anna\\Desktop\\res.jpg");
+    JpegImage jpegImage1(argv[2]);
     if (jpegImage1.m_pImageInfo)
     {
         std::cout << "\nDif pic:\n";
