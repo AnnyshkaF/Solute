@@ -4,25 +4,25 @@
 
 int main(int argc, const char* argv[])
 {
-    //argc = 3;
+    argc = 3;
     if(argc != 3)
     {
 	std::cout << "Not enough arg!" <<std::endl;
         return 1;
     }
-    //argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
-    //argv[2] = "C:\\Users\\Anna\\Desktop\\res.jpg";
-
+    argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
+    argv[2] = "C:\\Users\\Anna\\Desktop\\res.jpg";
+    int mask = 207;
     JpegImage jpegImage(argv[1]);
     if (jpegImage.m_pImageInfo)
     {
         RGB r(jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nNumComponent);
         r.IntoRGB(jpegImage.m_pImageInfo->pData);
 
-        r.FindBlockAndHideMessage("HelloWorld1", "First Secret message");
-        r.FindBlockAndHideMessage("HelloWorld2", "First Secret message");
-        r.FindBlockAndHideMessage("HelloWorld3", "First Secret message");
-        r.FindBlockAndHideMessage("HelloWorld4", "First Secret message");
+        r.FindBlockAndHideMessage("HelloWorld1", "First Secret message", mask);
+        r.FindBlockAndHideMessage("HelloWorld2", "First Secret message", mask);
+        r.FindBlockAndHideMessage("HelloWorld3", "First Secret message", mask);
+        r.FindBlockAndHideMessage("HelloWorld4", "First Secret message", mask);
 
         r.OutRGB(jpegImage.m_pImageInfo->pData);
         //r.CalculateHistogram();
@@ -36,10 +36,10 @@ int main(int argc, const char* argv[])
         RGB r(jpegImage1.m_pImageInfo->nHeight, jpegImage1.m_pImageInfo->nWidth, jpegImage1.m_pImageInfo->nNumComponent);
         r.IntoRGB(jpegImage1.m_pImageInfo->pData);
 
-        std::cout << r.FindBlockAndReturnMessage("HelloWorld1") << std::endl;
-        std::cout << r.FindBlockAndReturnMessage("HelloWorld2") << std::endl;
-        std::cout << r.FindBlockAndReturnMessage("HelloWorld3") << std::endl;
-        std::cout << r.FindBlockAndReturnMessage("HelloWorld4") << std::endl;
+        std::cout << r.FindBlockAndReturnMessage("HelloWorld1", mask) << std::endl;
+        std::cout << r.FindBlockAndReturnMessage("HelloWorld2", mask) << std::endl;
+        std::cout << r.FindBlockAndReturnMessage("HelloWorld3", mask) << std::endl;
+        std::cout << r.FindBlockAndReturnMessage("HelloWorld4", mask) << std::endl;
     }
     return 0;
 }
