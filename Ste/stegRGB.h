@@ -32,9 +32,6 @@ public:
     void IntoRGB(uint8_t* d);
     void OutRGB(uint8_t* d);
 
-
-    void CodeMessageInString(std::string s, int row, int col);
-
     void CodeMessage(std::string s, int row, int col, int mask);
     void FindBlockAndHideMessage(std::string for_hash, std::string to_hide, int mask);
 

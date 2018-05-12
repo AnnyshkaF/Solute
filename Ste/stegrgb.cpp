@@ -48,65 +48,25 @@ void RGB::OutRGB(uint8_t* d)
     }
 }
 
-void RGB::CodeMessageInString(std::string s, int row, int col)
-{
-    if ((row > height - 8) || (col > width - 8))
-    {
-        //std::cout << "Out of boundaries";
-        return;
-    }
-
-    int mask = 63;	////63(10) = 0011 1111(2)
-    size_t k = 0;
-    char cur;
-    int pos = 0, colour = 0;
-    std::string finale;
-    for (size_t j = col; j < col + s.length(); j++)
-    {
-        if (k < s.length())
-        {
-            int cur_val = s[k];
-            pos = pos % 4;
-            cur = (cur_val & 192); pos++; break;        //1100 0000
-
-            if (pos == 4)
-            {
-                k++;
-            }
-
-            colour = colour % 3;
-            switch (colour)
-            {
-            case 0:
-                rgb[row * width + j].rgbBlue = rgb[row * width + j].rgbBlue & mask;
-                rgb[row * width + j].rgbBlue = rgb[row * width + j].rgbBlue | cur;
-                colour++;
-                break;
-            case 1:
-                rgb[row * width + j].rgbGreen = rgb[row * width + j].rgbGreen & mask;
-                rgb[row * width + j].rgbGreen = rgb[row * width + j].rgbGreen | cur;
-                colour++;
-                break;
-            case 2:
-                rgb[row * width + j].rgbRed = rgb[row * width + j].rgbRed & mask;
-                rgb[row * width + j].rgbRed = rgb[row * width + j].rgbRed | cur;
-                colour++;
-                j++;
-                break;
-            }
-            cur = 0;
-        }
-        else { return; }
-    }
-
-
-}
-
+/*
+ * masks to hide
+ *
+ *     63(10)  =  0011.1111(2) = 0x3F(16)
+ *     207(10) =  1100.1111(2) = 0xCF(16)
+ *     243(10) =  1111.0011(2) = 0xF3(16)
+ *
+ * masks to reveal
+ *
+ *     192(10) = 1100.0000(2) = 0xC0(16)
+ *     48(10)  = 0011.0000(2) = 0x30(16)
+ *     12(10)  = 0000.1100(2) = 0xC(16)
+ *      3(10)  = 0000.0011(2) = 0x3(16)
+*/
 void RGB::CodeMessage(std::string s, int row, int col, int mask)
 {
     if ((row > height - 8) || (col > width - 8))
     {
-        std::cout << "Out of boundaries!";
+        //std::cout << "Out of boundaries!";
         return;
     }
     size_t k = 0;
@@ -122,31 +82,31 @@ void RGB::CodeMessage(std::string s, int row, int col, int mask)
                 pos = pos % 4;
                 switch(mask)
                 {
-                case 63:
+                case 0x3F:
                     switch (pos)
                     {
-                    case 0:	cur = (cur_val & 192); pos++; break;        //1100 0000
-                    case 1:	cur = (cur_val & 48) << 2; pos++; break;	//0011 0000
-                    case 2:	cur = (cur_val & 12) << 4; pos++; break;	//0000 1100
-                    case 3:	cur = (cur_val & 3) << 6; pos++; break;		//0000 0011
+                    case 0:	cur = (cur_val & 0xC0); pos++; break;        //1100 0000
+                    case 1:	cur = (cur_val & 0x30) << 2; pos++; break;	//0011 0000
+                    case 2:	cur = (cur_val & 0xC) << 4; pos++; break;	//0000 1100
+                    case 3:	cur = (cur_val & 0x3) << 6; pos++; break;		//0000 0011
                     }
                     break;
-                case 207:
+                case 0xCF:
                     switch (pos)
                     {
-                    case 0:	cur = (cur_val & 192) >> 2; pos++; break;	//1100 0000
-                    case 1:	cur = cur_val & 48; pos++; break;			//0011 0000
-                    case 2:	cur = (cur_val & 12) << 2; pos++; break;	//0000 1100
-                    case 3:	cur = (cur_val & 3) << 4; pos++; break;		//0000 0011
+                    case 0:	cur = (cur_val & 0xC0) >> 2; pos++; break;	//1100 0000
+                    case 1:	cur = (cur_val & 0x30); pos++; break;			//0011 0000
+                    case 2:	cur = (cur_val & 0xC) << 2; pos++; break;	//0000 1100
+                    case 3:	cur = (cur_val & 0x3) << 4; pos++; break;		//0000 0011
                     }
                     break;
-                case 243:
+                case 0xF3:
                     switch (pos)
                     {
-                    case 0:	cur = (cur_val & 192) >> 4; pos++; break;	//1100 0000
-                    case 1:	cur = (cur_val & 48) >> 2; pos++; break;	//0011 0000
-                    case 2:	cur = (cur_val & 12); pos++; break;         //0000 1100
-                    case 3:	cur = (cur_val & 3) << 2; pos++; break;		//0000 0011
+                    case 0:	cur = (cur_val & 0xC0) >> 4; pos++; break;	//1100 0000
+                    case 1:	cur = (cur_val & 0x30) >> 2; pos++; break;	//0011 0000
+                    case 2:	cur = (cur_val & 0xC); pos++; break;         //0000 1100
+                    case 3:	cur = (cur_val & 0x3) << 2; pos++; break;		//0000 0011
                     }
                     break;
                 }
@@ -174,14 +134,17 @@ void RGB::FindBlockAndHideMessage(std::string for_hash, std::string to_hide, int
     int x = 0;
     int y = 0;
 
-    while(x > width || x < 0 || x == 0) {    //while (x % 8 != 0)
+    while(x > width - 8 || x < 0 || x == 0)
+    {
         hash = CalculateHash(hash);
         x = GetIntFromHash(hash);
     }
-    while(y > height || y == 0 || y < 0) {    //while (x % 8 != 0)
+    while(y > height - 8 || y == 0 || y < 0)
+    {
         hash = CalculateHash(hash);
-        y =GetIntFromHash(hash);
+        y = GetIntFromHash(hash);
     }
+
     std::cout << "x = " << x ;
     std::cout << " y = " << y << std::endl;
 
@@ -190,17 +153,13 @@ void RGB::FindBlockAndHideMessage(std::string for_hash, std::string to_hide, int
 
 std::string RGB::GetMessage(int max_len, int row, int col, int mask)
 {
-    if ((row > height - 8) || (col > width - 8))
-    {
-        return "Out of boundaries";
-    }
-    std::string finalle;
+    std::string final;
     mask = 255 - mask;
-    int pos = 0;
+    int pos = 0;                //position in byte
+    int count = 0;              //num of current letter
+    int color = 0;              //current using color
+    char new_color = 0;         //color with shifted bits
     char colour = 0;
-    int color = 0;
-    char word = 0;
-    int count = 0;
 
     for (int i = row; i < row + 8; i++)
     {
@@ -222,45 +181,45 @@ std::string RGB::GetMessage(int max_len, int row, int col, int mask)
                 case 192:   //1100 0000
                     switch (pos)
                     {
-                    case 0: word = word | (color & mask); pos++; break;
-                    case 1: word = word | (color & mask) >> 2; pos++; break;
-                    case 2: word = word | (color & mask) >> 4; pos++;  break;
-                    case 3: word = word | (color & mask) >> 6; pos++; break;
+                    case 0: new_color = new_color | (color & mask); pos++; break;
+                    case 1: new_color = new_color | (color & mask) >> 2; pos++; break;
+                    case 2: new_color = new_color | (color & mask) >> 4; pos++;  break;
+                    case 3: new_color = new_color | (color & mask) >> 6; pos++; break;
                     }
                     break;
                 case 48:     //0011 0000
                     switch (pos)
                     {
-                    case 0: word = word | (color & mask) << 2; pos++; break;
-                    case 1: word = word | (color & mask); pos++; break;
-                    case 2: word = word | (color & mask) >> 2; pos++;  break;
-                    case 3: word = word | (color & mask) >> 4; pos++; break;
+                    case 0: new_color = new_color | (color & mask) << 2; pos++; break;
+                    case 1: new_color = new_color | (color & mask); pos++; break;
+                    case 2: new_color = new_color | (color & mask) >> 2; pos++;  break;
+                    case 3: new_color = new_color | (color & mask) >> 4; pos++; break;
                     }
                     break;
                 case 12:    //0000 1100
                     switch (pos)
                     {
-                    case 0: word = word | (color & mask) << 4; pos++; break;
-                    case 1: word = word | (color & mask) << 2; pos++; break;
-                    case 2: word = word | (color & mask); pos++;  break;
-                    case 3: word = word | (color & mask) >> 2; pos++; break;
+                    case 0: new_color = new_color | (color & mask) << 4; pos++; break;
+                    case 1: new_color = new_color | (color & mask) << 2; pos++; break;
+                    case 2: new_color = new_color | (color & mask); pos++;  break;
+                    case 3: new_color = new_color | (color & mask) >> 2; pos++; break;
                     }
                     break;
                 }
                 if (pos == 4)
                 {
-                    finalle += word;
-                    word = 0;
+                    final += new_color;
+                    new_color = 0;
                     count++;
                 }
             }
             else
             {
-                return finalle;
+                return final;
             }
         }
     }
-    return finalle;
+    return final;
 }
 std::string RGB::FindBlockAndReturnMessage(std::string for_hash, int mask)
 {
@@ -268,12 +227,13 @@ std::string RGB::FindBlockAndReturnMessage(std::string for_hash, int mask)
     int x = 0;
     int y = 0;
 
-    while(x > width || x < 0 || x == 0)
+    while(x > width - 8 || x < 0 || x == 0)
     {
         hash = CalculateHash(hash);
         x = GetIntFromHash(hash);
     }
-     while(y > height || y < 0 || y == 0) {    //while (x % 8 != 0) // (y < 300) чтобы справа прятать
+    while(y > height - 8 || y < 0 || y == 0)
+    {
         hash = CalculateHash(hash);
         y = GetIntFromHash(hash);
     }
@@ -285,6 +245,7 @@ std::string RGB::CalculateHash(std::string str)
     md5wrapper md5;
     return md5.getHashFromString(str);
 }
+
 int RGB::GetIntFromHash(std::string s)
 {
     int x = FirstIntFromHash(s);

@@ -4,6 +4,21 @@
 
 int main(int argc, const char* argv[])
 {
+    /*
+     * masks to hide(to use)
+     *
+     *     63(10)  =  0011.1111(2) = 0x3F(16)
+     *     207(10) =  1100.1111(2) = 0xCF(16)
+     *     243(10) =  1111.0011(2) = 0xF3(16)
+     *
+     * masks to reveal
+     *
+     *     192(10) = 1100.0000(2) = 0xC0(16)
+     *     48(10)  = 0011.0000(2) = 0x30(16)
+     *     12(10)  = 0000.1100(2) = 0xC(16)
+     *
+    */
+    int mask = 63;
     argc = 3;
     if(argc != 3)
     {
@@ -12,7 +27,7 @@ int main(int argc, const char* argv[])
     }
     argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
     argv[2] = "C:\\Users\\Anna\\Desktop\\res.jpg";
-    int mask = 207;
+
     JpegImage jpegImage(argv[1]);
     if (jpegImage.m_pImageInfo)
     {
