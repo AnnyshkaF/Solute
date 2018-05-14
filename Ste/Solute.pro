@@ -55,8 +55,8 @@ SOURCES += \
     jpeglib/jquant2.c \
     jpeglib/jutils.c \
     stb_image_write.c \
-    JpegImage.cpp \
-    stegRGB.cpp \
+    stegrgb.cpp \
+    jpegimage.cpp
 
    HEADERS += \
     jpeglib/jconfig.h \
@@ -72,8 +72,7 @@ SOURCES += \
     md5/md5wrapper.h \
     rgb_structure.h \
     stb_image_write.h \
-    stegRGB.h \
-    JpegImage.h \
+    stegrgb.h \
+    jpegimage.h
 
 FORMS +=
-

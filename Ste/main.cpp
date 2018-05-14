@@ -1,8 +1,8 @@
 #include "stb_image_write.h"
-#include "JpegImage.h"
-#include "stegRGB.h"
+#include "jpegimage.h"
+#include "stegrgb.h"
 
-int main(int argc, const char* argv[])
+int main(int argc,  char* argv[])  
 {
     /*
      * masks to hide(to use)
@@ -19,14 +19,17 @@ int main(int argc, const char* argv[])
      *
     */
     int mask = 63;
-    argc = 3;
-    if(argc != 3)
+
+    //argc = 3;
+    std::cout << "argc = " << argc << std::endl;
+
+	if(argc != 3)
     {
-	std::cout << "Not enough arg!" <<std::endl;
+        std::cout << "Not enough arg!" <<std::endl;
         return 1;
     }
-    argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
-    argv[2] = "C:\\Users\\Anna\\Desktop\\res.jpg";
+    //argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
+    //argv[2] = "C:\\Users\\Anna\\Desktop\\res.jpg";
 
     JpegImage jpegImage(argv[1]);
     if (jpegImage.m_pImageInfo)
@@ -41,6 +44,7 @@ int main(int argc, const char* argv[])
 
         r.OutRGB(jpegImage.m_pImageInfo->pData);
         //r.CalculateHistogram();
+
         stbi_write_jpg(argv[2], jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nNumComponent, jpegImage.m_pImageInfo->pData, 100);
     }
 

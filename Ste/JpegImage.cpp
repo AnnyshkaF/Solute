@@ -1,4 +1,4 @@
-#include "JpegImage.h"
+#include "jpegimage.h"
 
 
 JpegImage::JpegImage(const char* szFileName)

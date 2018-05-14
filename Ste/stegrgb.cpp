@@ -1,4 +1,4 @@
-#include "stegRGB.h"
+#include "stegrgb.h"
 
 RGB::RGB(int height, int width, int comp)
 {
