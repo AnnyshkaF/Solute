@@ -85,27 +85,27 @@ void RGB::CodeMessage(std::string s, int row, int col, int mask)
                 case 0x3F:
                     switch (pos)
                     {
-                    case 0:	cur = (cur_val & 0xC0); pos++; break;        //1100 0000
-                    case 1:	cur = (cur_val & 0x30) << 2; pos++; break;	//0011 0000
-                    case 2:	cur = (cur_val & 0xC) << 4; pos++; break;	//0000 1100
+                    case 0:	cur = (cur_val & 0xC0); pos++; break;           //1100 0000
+                    case 1:	cur = (cur_val & 0x30) << 2; pos++; break;	    //0011 0000
+                    case 2:	cur = (cur_val & 0xC) << 4; pos++; break;	    //0000 1100
                     case 3:	cur = (cur_val & 0x3) << 6; pos++; break;		//0000 0011
                     }
                     break;
                 case 0xCF:
                     switch (pos)
                     {
-                    case 0:	cur = (cur_val & 0xC0) >> 2; pos++; break;	//1100 0000
+                    case 0:	cur = (cur_val & 0xC0) >> 2; pos++; break;	    //1100 0000
                     case 1:	cur = (cur_val & 0x30); pos++; break;			//0011 0000
-                    case 2:	cur = (cur_val & 0xC) << 2; pos++; break;	//0000 1100
+                    case 2:	cur = (cur_val & 0xC) << 2; pos++; break;	    //0000 1100
                     case 3:	cur = (cur_val & 0x3) << 4; pos++; break;		//0000 0011
                     }
                     break;
                 case 0xF3:
                     switch (pos)
                     {
-                    case 0:	cur = (cur_val & 0xC0) >> 4; pos++; break;	//1100 0000
-                    case 1:	cur = (cur_val & 0x30) >> 2; pos++; break;	//0011 0000
-                    case 2:	cur = (cur_val & 0xC); pos++; break;         //0000 1100
+                    case 0:	cur = (cur_val & 0xC0) >> 4; pos++; break;	    //1100 0000
+                    case 1:	cur = (cur_val & 0x30) >> 2; pos++; break;	    //0011 0000
+                    case 2:	cur = (cur_val & 0xC); pos++; break;            //0000 1100
                     case 3:	cur = (cur_val & 0x3) << 2; pos++; break;		//0000 0011
                     }
                     break;
