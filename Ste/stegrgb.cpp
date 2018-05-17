@@ -290,69 +290,76 @@ int RGB::FirstIntFromHash(std::string s)
 
 void RGB::CalculateHistogram()
 {
-    std::vector<int> mas_lum;       //яркость каждого пикселя отдельно
+    std::vector<int> arr_lum;       //яркость каждого пикселя отдельно
     int lum_col_height[255] = {0};  //гистограмма яркости
-    int blue_col_height[255] = {0};
-    int green_col_height[255] = {0};
-    int red_col_height[255] = {0};
-    max_val str_max_lum{0,0,0};
+    max_val max_lum1{0,0,0};
+    max_val max_lum2{0,0,0};
 
     for(int i = 0; i < height * width; i++)
-        {
-            int lum = (0.299 * rgb[i].rgbRed + 0.587 * rgb[i].rgbGreen + 0.114 * rgb[i].rgbBlue);
-            if(lum > 255){lum = 255;}
-            if(lum < 0){lum = 0;}
-            mas_lum.push_back(lum);
-
-            lum_col_height[lum]++;
-            blue_col_height[rgb[i].rgbBlue]+=1;
-            green_col_height[rgb[i].rgbGreen]+=1;
-            red_col_height[rgb[i].rgbRed]+=1;
-
-            if(str_max_lum.val < lum_col_height[lum])
-            {
-                str_max_lum.val = lum_col_height[lum];
-                str_max_lum.col = i % width;
-                str_max_lum.row = i / width;
-            }
-            //if(max_blue.val < blue_col_height[lum]) {max_blue.val = blue_col_height[lum];max_blue.col = i / Width; max_blue.row = i % Width;}
-            //if(max_green.val < green_col_height[lum]) {max_green.val = green_col_height[lum];max_green.col = i / Width; max_green.row = i % Width;}
-            //if(max_red.val < red_col_height[lum]) {max_red.val = red_col_height[lum];max_red.col = i / Width; max_red.row = i % Width;}
-    }
-     WriteHistogramToFile(lum_col_height);
-     FindBlockInHistogram(mas_lum, str_max_lum);
-}
-int RGB::FindBlockInHistogram(std::vector<int> mas_lum, max_val point)
-{
-    struct max_val lv,pv,ln,pn;
-    for(int y = 0; y < 80; y++)
     {
-        if(point.col + y > height){std::cout << "out of Y"; return - 1;}
-        for(int x = 1; x < 80; x++)
+        int lum = (0.299 * rgb[i].rgbRed + 0.587 * rgb[i].rgbGreen + 0.114 * rgb[i].rgbBlue);
+        if(lum > 255){lum = 255;}
+        if(lum < 0){lum = 0;}
+        arr_lum.push_back(lum);
+
+        lum_col_height[lum]++;
+        // WriteHistogramToFile(lum_col_height);
+        if(max_lum1.val < lum_col_height[lum])
         {
-            if(point.col + x > width){std::cout << "out of X"; return -1;}
+            max_lum1.val = lum_col_height[lum];
+            max_lum1.col = i % width;
+            max_lum1.row = i / width;
+            std::cout << "lum: " << lum << std::endl;
+        }
+
+    }
+    //max_lum1 = FindHistMaximum(lum_col_height, arr_lum);
+     FindBlockInHistogram(arr_lum, max_lum1);
+}
+
+max_val RGB::FindHistMaximum(int* lum_col_height, std::vector<int> arr_lum)
+{
+    max_val max_lum{0,0,0};
+    for(int i = 0; i < height * width; i++)
+    {
+        if(max_lum.val < lum_col_height[arr_lum[i]])
+        {
+            max_lum.val = lum_col_height[arr_lum[i]];
+            max_lum.col = i % width;
+            max_lum.row = i / width;
+        }
+    }
+    lum_col_height[max_lum.val] = 0;    //порчу гистограмму
+    return max_lum;
+}
+int RGB::FindBlockInHistogram(std::vector<int> arr_lum, max_val point)
+{
+    int g = 10;
+    struct max_val lv,pv,ln,pn;
+    for(int y = 0; y < 100; y++)
+    {
+        if(point.row + y > height){ break;}
+        for(int x = 1; x < 100; x++)
+        {
+            if(point.col + x > width){ break;}
             if(((point.col + y) * width + point.row + x) > width * height)
             {break;}
 
-            /*if(abs(mas_lum[(point.col + y) * Width + point.row + x]  - mas_lum[point.col * Width + point.row]) < 100)
-            {pv.row = point.row + x; pn.row = point.row + x; pv.col = point.col + y; lv.col = point.col + y;}
-            if(abs(mas_lum[(point.col + y) * Width + point.row - x]  - mas_lum[point.col * Width + point.row]) < 100)
-            {lv.row = point.row - x; ln.row = point.row - x; lv.col = point.col + y; pv.col = point.col + y;}
-
-            if(abs(mas_lum[(point.col - y) * Width + point.row + x]  - mas_lum[point.col * Width + point.row]) < 100)
-            {pv.row = point.row + x; pn.row = point.row + x; pn.col = point.col - y; ln.col = point.col - y;}
-            if(abs(mas_lum[(point.col - y) * Width + point.row - x]  - mas_lum[point.col * Width + point.row]) < 100)
-            {lv.row = point.row - x; ln.row = point.row - x; ln.col = point.col - y; pn.col = point.col - y;}*/
-
-            if(abs(mas_lum[(point.row + y) * width + point.col + x]  - mas_lum[point.row * width + point.col]) < 100)
+            if(abs(arr_lum[(point.row + y) * width + point.col + x]  - arr_lum[point.row * width + point.col]) < g)
             {pn.col = point.col + x; pn.row = point.row + y;}
-            if(abs(mas_lum[(point.row + y) * width + point.row - x]  - mas_lum[point.row * width + point.col]) < 100)
+            if(abs(arr_lum[(point.row + y) * width + point.row - x]  - arr_lum[point.row * width + point.col]) < g)
             {ln.col = point.col - x; ln.row = point.row + y;}
 
-            if(abs(mas_lum[(point.row - y) * width + point.col + x]  - mas_lum[point.row * width + point.col]) < 100)
+            if(abs(arr_lum[(point.row - y) * width + point.col + x]  - arr_lum[point.row * width + point.col]) < g)
             {pv.col = point.col + x; pv.row = point.row - y;}
-            if(abs(mas_lum[(point.row - y) * width + point.col - x]  - mas_lum[point.row * width + point.col]) < 100)
+            if(abs(arr_lum[(point.row - y) * width + point.col - x]  - arr_lum[point.row * width + point.col]) < g)
             {lv.col = point.col - x; lv.row = point.row - y;}
+
+            (ln.row < pn.row)? pn.row = ln.row: ln.row = pn.row;
+            (lv.row < pv.row)? pv.row = lv.row: lv.row = pv.row;
+            (ln.col < lv.col)? lv.col = ln.col: ln.col = lv.col;
+            (pn.col < pv.col)? pv.col = pn.col: pn.col = pv.col;
+
         }
     }
     HighlightBlock(ln, lv, pn, pv);
@@ -363,38 +370,24 @@ void RGB::HighlightBlock(max_val ln, max_val lv, max_val pn, max_val pv)
 {
     for(int i = lv.col; i < pv.col; i++)
     {
-        rgb[lv.row * width + i].rgbBlue = 0;
-        rgb[lv.row * width + i].rgbGreen = 0;
-        rgb[lv.row * width + i].rgbRed = 0;
+        rgb[lv.row * width + i].rgbBlue = 255;
+        rgb[lv.row * width + i].rgbGreen = 255;
+        rgb[lv.row * width + i].rgbRed = 255;
 
-        rgb[ln.row * width + i].rgbBlue = 0;
-        rgb[ln.row * width + i].rgbGreen = 0;
-        rgb[ln.row * width + i].rgbRed = 0;
+        rgb[ln.row * width + i].rgbBlue = 255;
+        rgb[ln.row * width + i].rgbGreen = 255;
+        rgb[ln.row * width + i].rgbRed = 255;
     }
     for(int i = lv.row; i < ln.row; i++)
     {
-        rgb[i * width + ln.col].rgbBlue = 0;
-        rgb[i * width + ln.col].rgbGreen = 0;
-        rgb[i * width + ln.col].rgbRed = 0;
+        rgb[i * width + ln.col].rgbBlue = 255;
+        rgb[i * width + ln.col].rgbGreen = 255;
+        rgb[i * width + ln.col].rgbRed = 255;
 
-        rgb[i * width + pn.col].rgbBlue = 0;
-        rgb[i * width + pn.col].rgbGreen = 0;
-        rgb[i * width + pn.col].rgbRed = 0;
+        rgb[i * width + pn.col].rgbBlue = 255;
+        rgb[i * width + pn.col].rgbGreen = 255;
+        rgb[i * width + pn.col].rgbRed = 255;
     }
 }
-void RGB::WriteHistogramToFile(int* a)
-{
-    FILE* f = fopen("C:\\Users\\Anna\\Desktop\\1.txt", "w");
-    for(int i = 0; i < 255; i++)
-    {
-        int cur = a[i] / 10;
-        while(cur > -1)
-        {
-            fprintf(f,"%c",'*');
-            //std::cout << "x";
-            cur--;
-        }
-        fprintf(f, "%c", '\n');
-    }
-    fclose(f);
-}
+
+

@@ -47,6 +47,8 @@ public:
     int FindBlockInHistogram(std::vector<int> mas_lum, max_val point);
     void HighlightBlock(max_val ln, max_val lv, max_val pn, max_val pv);
     void WriteHistogramToFile(int* a);
+
+    max_val FindHistMaximum(int* lum_col_height, std::vector<int> arr_lum);
 };
 
 #endif
