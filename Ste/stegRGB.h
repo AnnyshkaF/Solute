@@ -2,7 +2,6 @@
 #define STEGRGB_H
 
 #include "md5/md5wrapper.h"
-#include "rgb_structure.h"
 #include <iostream>
 #include <math.h>
 #include <string>

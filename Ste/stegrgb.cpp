@@ -1,4 +1,5 @@
 #include "stegrgb.h"
+# include "bitset"
 
 Rgb::Rgb(int height, int width, int comp)
 {
@@ -102,20 +103,27 @@ std::string Rgb::GetMessage(int max_len, int row, int col, int shift)
     std::string final;
     uint8_t letter = 0;
     uint8_t mask = 3 << shift;
-    int pos = 0;
+    int pos = 3;
 
     for (int i = row; i < row + 8; i++)
     {
         for (int j = col; j < col + 8*3; j++)
         {
-          letter = letter | ((data_[width_ * i + j] & mask) >> (pos * 2));
-          pos++;
-          if(pos == 4)
+          if((shift/2 - pos) * 2 < 0)
           {
-                pos = pos % 4;
+              letter = letter | ((data_[width_ * i + j] & mask) << (-((shift/2 - pos) * 2)));
+          }
+          else
+          {
+              letter = letter | ((data_[width_ * i + j] & mask) >> ((shift/2 - pos) * 2));
+          }
+          pos--;
+          if(pos == -1)
+          {
+                pos = 3;
                 final += letter;
                 letter = 0;
-           }
+          }
         }
     }
     return final;
