@@ -6,16 +6,12 @@ int main(int argc,  char* argv[])
 {
     int shift = 6;
 
-    argc = 3;
-    std::cout << "argc = " << argc << std::endl;
-
+    int key = 0;
 	if(argc != 3)
     {
         std::cout << "Not enough arg!" <<std::endl;
         return 1;
     }
-    argv[1] = "C:\\Users\\Anna\\Desktop\\SN.jpg";
-    argv[2] = "C:\\Users\\Anna\\Desktop\\r.jpg";
 
     JpegImage jpegImage(argv[1]);
     if (jpegImage.m_pImageInfo)
@@ -23,10 +19,7 @@ int main(int argc,  char* argv[])
         Rgb r(jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nNumComponent);
         r.IntoRGB(jpegImage.m_pImageInfo->pData);
 
-        r.FindBlockAndHideMessage("HelloWorld1", "First Secret message", shift);
-        r.FindBlockAndHideMessage("HelloWorld2", "Second Secret message", shift);
-//        r.FindBlockAndHideMessage("HelloWorld3", "First Secret message", shift);
-//        r.FindBlockAndHideMessage("HelloWorld4", "First Secret message", shift);
+        key = r.HideText("HelloWorld", "First Secret message!Second secret message! Third secret message! Fourth secret message! Fifth secret message! Sixth secret message! Seventh secret message!", shift);
 
         //r.CalculateHistogram();
 
@@ -41,10 +34,8 @@ int main(int argc,  char* argv[])
         Rgb r(jpegImage1.m_pImageInfo->nHeight, jpegImage1.m_pImageInfo->nWidth, jpegImage1.m_pImageInfo->nNumComponent);
         r.IntoRGB(jpegImage1.m_pImageInfo->pData);
 
-        std::cout << r.FindBlockAndReturnMessage("HelloWorld1", shift) << std::endl;
-        std::cout << r.FindBlockAndReturnMessage("HelloWorld2", shift) << std::endl;
-//        std::cout << r.FindBlockAndReturnMessage("HelloWorld3", shift) << std::endl;
-//        std::cout << r.FindBlockAndReturnMessage("HelloWorld4", shift) << std::endl;
+        std::cout << r.GetText("HelloWorld", shift, key);
+
     }
     return 0;
 }

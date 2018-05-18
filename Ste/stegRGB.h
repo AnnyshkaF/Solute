@@ -21,8 +21,14 @@ private:
     int height_;
     int width_;
     int components_;
+
+    void HideMessage(std::string s, int row, int col, int shift);
+    void FindBlockAndHideMessage(std::string for_hash, std::string to_hide, int shift);
+
+    std::string GetMessage(int max_len, int row, int col, int mask);
+    std::string FindBlockAndReturnMessage(std::string for_hash, int mask);
 public:
-    uint8_t data_[897600];
+    std::vector<uint8_t> data_;
 
     Rgb(int height_, int width_, int comp);
     ~Rgb();
@@ -32,12 +38,8 @@ public:
     void IntoRGB(uint8_t* d);
     void OutRGB(uint8_t* d);
 
-    void HideMessage(std::string s, int row, int col, int shift);
-    void FindBlockAndHideMessage(std::string for_hash, std::string to_hide, int shift);
-    int HideText(std::string for_hash, std::string text, int shift);
 
-    std::string GetMessage(int max_len, int row, int col, int mask);
-    std::string FindBlockAndReturnMessage(std::string for_hash, int mask);
+    int HideText(std::string for_hash, std::string text, int shift);  
     std::string GetText(std::string for_hash, int shift, int key);
 
     std::string CalculateHash(std::string str);

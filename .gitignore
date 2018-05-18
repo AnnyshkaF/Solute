@@ -2,3 +2,6 @@
 build-*/*
 
 *.o
+Ste/dialog.cpp
+Ste/dialog.h
+Ste/dialog.ui

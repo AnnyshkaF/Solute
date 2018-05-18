@@ -21,10 +21,9 @@ void Rgb::IntoRGB(uint8_t* d)
 {
     for (int i = 0; i < height_ * width_ * components_; i++)
     {
-        data_[i] = d[i];
+        data_.push_back(d[i]);
     }
 }
-
 void Rgb::OutRGB(uint8_t* d)
 {
     for (int i = 0; i < height_ * width_ * components_; i++)
@@ -90,8 +89,8 @@ int Rgb::HideText(std::string for_hash, std::string text, int shift)
     {
        tmp = &text[i];
        tmp.resize(48);
-       FindBlockAndHideMessage(for_hash, tmp, shift);
        for_hash.append(for_hash);
+       FindBlockAndHideMessage(for_hash, tmp, shift);       
        tmp = {0};
        key++;
     }
@@ -144,8 +143,8 @@ std::string Rgb::GetText(std::string for_hash, int shift, int key)
     std::string final;
     for(size_t i = key; i > 0; i--)
     {
-       final.append(FindBlockAndReturnMessage(for_hash, shift));
        for_hash.append(for_hash);
+       final.append(FindBlockAndReturnMessage(for_hash, shift));
        key++;
     }
     return final;
