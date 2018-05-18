@@ -70,7 +70,6 @@ SOURCES += \
     jpeglib/jversion.h \
     md5/md5.h \
     md5/md5wrapper.h \
-    rgb_structure.h \
     stb_image_write.h \
     stegrgb.h \
     jpegimage.h

@@ -2,15 +2,15 @@
 
 # include "stdio.h"
 # include "stdlib.h"
-
+# include "stdint.h"
 typedef struct
 {
 	unsigned short  bfType;
 	unsigned int    bfSize;
 	unsigned short  bfReserved1;
 	unsigned short  bfReserved2;
-	unsigned int    BfOffBits;
-} BITMAPFILEHEADER;
+    unsigned int    bfOffBits;
+} BitMapFileHeader;
 
 typedef struct
 {
@@ -25,13 +25,13 @@ typedef struct
 	unsigned int	biYPelsPerMeter;
 	unsigned int	biClrUsed;
 	unsigned int	biClrImportant;
-} BITMAPINFOHEADER;
+} BitMapInfoHeader;
 
 typedef struct
 {
-	int  rgbBlue;
-	int  rgbGreen;
-	int  rgbRed;
-} RGBQUAD;
+    uint8_t  Blue;
+    uint8_t  Green;
+    uint8_t  Red;
+} RgbTriplet;
 
 
