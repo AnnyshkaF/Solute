@@ -1,5 +1,4 @@
 #include "stegrgb.h"
-# include "bitset"
 
 Rgb::Rgb(int height, int width, int comp)
 {
