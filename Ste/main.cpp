@@ -20,8 +20,12 @@ int main(int argc,  char* argv[])
         r.IntoRGB(jpegImage.m_pImageInfo->pData);
 
         key = r.HideText("HelloWorld", "First Secret message!Second secret message! Third secret message! Fourth secret message! Fifth secret message! Sixth secret message! Seventh secret message!", shift);
-
-        //r.CalculateHistogram();
+        r.CalculateHistogram();
+        //r.WriteHistogramToFile("C:\\Users\\Anna\\Desktop\\1.txt", NUMBER);
+        //r.WriteHistogramToFile("C:\\Users\\Anna\\Desktop\\2.txt", GRAPHIC);
+        r.FindBlockInHistogram(MaxVal{360, 290}, 15);
+        r.FindBlockInHistogram(MaxVal{300, 550}, 30);
+        r.FindBlockInHistogram(MaxVal{100, 100}, 50);
 
         r.OutRGB(jpegImage.m_pImageInfo->pData);
         stbi_write_jpg(argv[2], jpegImage.m_pImageInfo->nWidth, jpegImage.m_pImageInfo->nHeight, jpegImage.m_pImageInfo->nNumComponent, jpegImage.m_pImageInfo->pData, 100);

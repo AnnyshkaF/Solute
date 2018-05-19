@@ -9,11 +9,10 @@
 
 struct MaxVal
 {
-    int val;
-    int col;
     int row;
+    int col;
 };
-
+enum Format{NUMBER, GRAPHIC};
 class Rgb
 {
 private:
@@ -26,17 +25,19 @@ private:
 
     std::string GetMessage(int max_len, int row, int col, int mask);
     std::string FindBlockAndReturnMessage(std::string for_hash, int mask);
+
 public:
     std::vector<uint8_t> data_;
+    std::vector<int> lum_pixels;
+    int histogram[255] = {0};
 
-    Rgb(int height_, int width_, int comp);
+    Rgb(int height, int width, int comp); // : histogram(height_*width_*components_){}
     ~Rgb();
     int GetHeight();
     int GetWidth();
 
     void IntoRGB(uint8_t* d);
     void OutRGB(uint8_t* d);
-
 
     int HideText(std::string for_hash, std::string text, int shift);  
     std::string GetText(std::string for_hash, int shift, int key);
@@ -46,12 +47,13 @@ public:
     int FirstIntFromHash(std::string s);
 
     void CalculateHistogram();
-    int FindBlockInHistogram(std::vector<int> mas_lum, MaxVal point);
+    void WriteHistogramToFile(const char* filename, Format format);
+    int FindBlockInHistogram(MaxVal point, int difference);
     void HighlightBlock(MaxVal ln, MaxVal lv, MaxVal pn, MaxVal pv);
-    void WriteHistogramToFile(int* a);
-    MaxVal dod(int arr_lum[], std::vector<int>& lum_col_height);
-    //max_val FindHistMaximum(int* lum_col_height, std::vector<int> arr_lum);
+
 };
+
+
 
 #endif
 
