@@ -1,11 +1,11 @@
-# define _CRT_SECURE_NO_WARNINGS
-# ifndef JPEG_LOADER_H
-# define JPEG_LOADER_H
+#define _CRT_SECURE_NO_WARNINGS
+#ifndef JPEG_LOADER_H
+#define JPEG_LOADER_H
 
-# include "jpeglib/jpeglib.h"
-# include <setjmp.h>
-# include <stdint.h>
-# include<memory>
+#include "jpeglib/jpeglib.h"
+#include <setjmp.h>
+#include <stdint.h>
+#include <memory>
 
 class JpegImage
 {
